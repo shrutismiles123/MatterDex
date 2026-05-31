@@ -1721,52 +1721,36 @@ function playStarSound() {
   });
 }
 
-// ── MUSIC TOGGLE BUTTON ──
-const musicBtn = document.createElement('button');
-musicBtn.id = 'musicBtn';
-musicBtn.innerHTML = '♪ MUSIC ON';
-musicBtn.style.cssText = `
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 2000;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #010a14;
-  background: linear-gradient(135deg, #00fff7, #00aaff);
-  border: none;
-  padding: 0.6rem 1.1rem;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(0,200,255,0.5);
-  transition: all 0.3s;
-`;
-document.body.appendChild(musicBtn);
-
-let musicOn = false;
-musicBtn.addEventListener('click', () => {
-  playClickSound();
-  if (!musicOn) {
+// ── AUTO START MUSIC ──
+function tryStartMusic() {
+  if (!musicStarted) {
     startBackgroundMusic();
     if (musicGain) {
       musicGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      musicGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 1.5);
+      musicGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 2);
     }
-    musicBtn.innerHTML = '♪ MUSIC ON';
-    musicBtn.style.background = 'linear-gradient(135deg, #00fff7, #00aaff)';
     musicOn = true;
-  } else {
-    if (musicGain) {
-      musicGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
-    }
-    musicBtn.innerHTML = '♪ MUSIC OFF';
-    musicBtn.style.background = 'linear-gradient(135deg, #333, #555)';
-    musicBtn.style.color = '#aaa';
-    musicOn = false;
   }
-});
+  document.removeEventListener('click', tryStartMusic);
+  document.removeEventListener('scroll', tryStartMusic);
+  document.removeEventListener('keydown', tryStartMusic);
+  document.removeEventListener('touchstart', tryStartMusic);
+}
+
+// Try immediately, fallback to first interaction
+try {
+  getAudioCtx();
+  if (audioCtx.state === 'running') {
+    tryStartMusic();
+  } else {
+    audioCtx.resume().then(tryStartMusic).catch(() => {});
+  }
+} catch(e) {}
+
+document.addEventListener('click', tryStartMusic);
+document.addEventListener('scroll', tryStartMusic);
+document.addEventListener('keydown', tryStartMusic);
+document.addEventListener('touchstart', tryStartMusic);
 
 // ── ATTACH SOUNDS TO ELEMENTS ──
 document.addEventListener('click', (e) => {
