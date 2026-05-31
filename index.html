@@ -1354,6 +1354,7 @@ const chubus = [
     type: 'ELEMENT',
     power: 78,
     icon: '⚙️',
+    img: 'i/Screenshot_31-5-2026_91549_chatgpt.com.jpeg',
     col: '#7cc8ff',
     glow: 'rgba(124,200,255,0.4)',
     dim: 'rgba(30,80,140,0.25)',
@@ -1366,6 +1367,7 @@ const chubus = [
     type: 'COMPOUND',
     power: 55,
     icon: '🟠',
+    img: 'i/Screenshot_31-5-2026_91840_chatgpt.com.jpeg',
     col: '#ff7b29',
     glow: 'rgba(255,123,41,0.4)',
     dim: 'rgba(120,50,10,0.25)',
@@ -1378,6 +1380,7 @@ const chubus = [
     type: 'ELEMENT',
     power: 92,
     icon: '✨',
+    img: 'i/Screenshot_31-5-2026_9191_chatgpt.com.jpeg',
     col: '#ffd700',
     glow: 'rgba(255,215,0,0.45)',
     dim: 'rgba(100,80,0,0.25)',
@@ -1390,6 +1393,7 @@ const chubus = [
     type: 'COMPOUND',
     power: 70,
     icon: '💧',
+    img: 'i/Screenshot_31-5-2026_91911_chatgpt.com.jpeg',
     col: '#00cfff',
     glow: 'rgba(0,207,255,0.4)',
     dim: 'rgba(0,80,130,0.25)',
@@ -1402,6 +1406,7 @@ const chubus = [
     type: 'MIXTURE',
     power: 83,
     icon: '🩸',
+    img: 'i/Screenshot_31-5-2026_91921_chatgpt.com.jpeg',
     col: '#ff3b3b',
     glow: 'rgba(255,59,59,0.4)',
     dim: 'rgba(120,10,10,0.25)',
@@ -1414,6 +1419,7 @@ const chubus = [
     type: 'ELEMENT',
     power: 65,
     icon: '💥',
+    img: 'i/Screenshot_31-5-2026_91934_chatgpt.com.jpeg',
     col: '#a0eaff',
     glow: 'rgba(160,234,255,0.4)',
     dim: 'rgba(40,110,160,0.25)',
@@ -1426,6 +1432,7 @@ const chubus = [
     type: 'ELEMENT',
     power: 80,
     icon: '🌬️',
+    img: 'i/Screenshot_31-5-2026_91948_chatgpt.com.jpeg',
     col: '#39ff8e',
     glow: 'rgba(57,255,142,0.4)',
     dim: 'rgba(10,100,50,0.25)',
@@ -1438,6 +1445,7 @@ const chubus = [
     type: 'ELEMENT',
     power: 99,
     icon: '☢️',
+    img: 'i/Screenshot_31-5-2026_9203_chatgpt.com.jpeg',
     col: '#9bff40',
     glow: 'rgba(155,255,64,0.4)',
     dim: 'rgba(60,90,0,0.25)',
@@ -1453,11 +1461,13 @@ chubus.forEach((c, i) => {
   card.className = 'chubu-card';
   card.style.cssText = `--card-col:${c.col}; --card-glow:${c.glow}; --card-dim:${c.dim}; transition-delay:${i*0.07}s`;
   card.innerHTML = `
-    <div class="chubu-img" style="background:${c.dim}">
-      <img src="" alt="${c.name}" class="chubu-real-img" style="display:none; width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:0;">
-      <div class="chubu-img-placeholder">
+    <div class="chubu-img" style="background:${c.dim}; position:relative; overflow:hidden;">
+      <img src="${c.img}" alt="${c.name}" class="chubu-real-img"
+        style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:0; display:block;"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="chubu-img-placeholder" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; position:absolute; inset:0;">
         <div class="chubu-img-icon">${c.icon}</div>
-        <div class="chubu-img-label">[ ADD IMAGE: ${c.name.toLowerCase().replace(' ','_')}.jpg ]</div>
+        <div class="chubu-img-label">[ IMAGE NOT FOUND ]</div>
       </div>
     </div>
     <div class="chubu-body">
