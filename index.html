@@ -1545,6 +1545,251 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 
 revealAll.forEach(el => io.observe(el));
+
+// ── AUDIO SYSTEM ──
+let audioCtx = null;
+let musicStarted = false;
+let masterGain = null;
+let musicGain = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.7;
+    masterGain.connect(audioCtx.destination);
+    musicGain = audioCtx.createGain();
+    musicGain.gain.value = 0.18;
+    musicGain.connect(masterGain);
+  }
+  return audioCtx;
+}
+
+// ── BACKGROUND MUSIC (ambient sci-fi loop) ──
+function startBackgroundMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  const ctx = getAudioCtx();
+
+  function playAmbientLayer() {
+    // Deep drone bass
+    const bass = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bass.type = 'sine';
+    bass.frequency.setValueAtTime(55, ctx.currentTime);
+    bass.frequency.linearRampToValueAtTime(58, ctx.currentTime + 8);
+    bass.frequency.linearRampToValueAtTime(55, ctx.currentTime + 16);
+    bassGain.gain.setValueAtTime(0, ctx.currentTime);
+    bassGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 2);
+    bassGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 14);
+    bassGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 16);
+    bass.connect(bassGain);
+    bassGain.connect(musicGain);
+    bass.start(ctx.currentTime);
+    bass.stop(ctx.currentTime + 16);
+
+    // Mid shimmer
+    const mid = ctx.createOscillator();
+    const midGain = ctx.createGain();
+    mid.type = 'triangle';
+    mid.frequency.setValueAtTime(220, ctx.currentTime);
+    mid.frequency.linearRampToValueAtTime(246, ctx.currentTime + 4);
+    mid.frequency.linearRampToValueAtTime(220, ctx.currentTime + 8);
+    mid.frequency.linearRampToValueAtTime(196, ctx.currentTime + 12);
+    mid.frequency.linearRampToValueAtTime(220, ctx.currentTime + 16);
+    midGain.gain.setValueAtTime(0, ctx.currentTime);
+    midGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 3);
+    midGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 13);
+    midGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 16);
+    mid.connect(midGain);
+    midGain.connect(musicGain);
+    mid.start(ctx.currentTime);
+    mid.stop(ctx.currentTime + 16);
+
+    // High sparkle pulse
+    const sparkleNotes = [440, 494, 523, 587, 659, 523, 494, 440];
+    sparkleNotes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 2 + 0.5;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.15, t + 0.3);
+      g.gain.linearRampToValueAtTime(0, t + 1.5);
+      osc.connect(g);
+      g.connect(musicGain);
+      osc.start(t);
+      osc.stop(t + 1.8);
+    });
+
+    // Noise pad (atmospheric texture)
+    const bufferSize = ctx.sampleRate * 2;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.03;
+    const noiseSource = ctx.createBufferSource();
+    noiseSource.buffer = buffer;
+    noiseSource.loop = true;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 800;
+    noiseFilter.Q.value = 0.5;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+    noiseGain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 4);
+    noiseGain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 12);
+    noiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 16);
+    noiseSource.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(musicGain);
+    noiseSource.start(ctx.currentTime);
+    noiseSource.stop(ctx.currentTime + 16);
+
+    // Loop every 16 seconds
+    setTimeout(playAmbientLayer, 15500);
+  }
+
+  playAmbientLayer();
+}
+
+// ── CLICK SOUND ──
+function playClickSound() {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(880, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.4, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.2);
+}
+
+// ── HOVER SOUND ──
+function playHoverSound() {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(660, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+  gain.gain.setValueAtTime(0.12, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.12);
+}
+
+// ── CHAPTER OPEN SOUND ──
+function playChapterSound() {
+  const ctx = getAudioCtx();
+  [523, 659, 784].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.1;
+    gain.gain.setValueAtTime(0.25, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(t);
+    osc.stop(t + 0.4);
+  });
+}
+
+// ── STAR BURST SOUND ──
+function playStarSound() {
+  const ctx = getAudioCtx();
+  [784, 988, 1175, 1319].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.06;
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(t);
+    osc.stop(t + 0.3);
+  });
+}
+
+// ── MUSIC TOGGLE BUTTON ──
+const musicBtn = document.createElement('button');
+musicBtn.id = 'musicBtn';
+musicBtn.innerHTML = '♪ MUSIC ON';
+musicBtn.style.cssText = `
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 2000;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #010a14;
+  background: linear-gradient(135deg, #00fff7, #00aaff);
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,200,255,0.5);
+  transition: all 0.3s;
+`;
+document.body.appendChild(musicBtn);
+
+let musicOn = false;
+musicBtn.addEventListener('click', () => {
+  playClickSound();
+  if (!musicOn) {
+    startBackgroundMusic();
+    if (musicGain) {
+      musicGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      musicGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 1.5);
+    }
+    musicBtn.innerHTML = '♪ MUSIC ON';
+    musicBtn.style.background = 'linear-gradient(135deg, #00fff7, #00aaff)';
+    musicOn = true;
+  } else {
+    if (musicGain) {
+      musicGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+    }
+    musicBtn.innerHTML = '♪ MUSIC OFF';
+    musicBtn.style.background = 'linear-gradient(135deg, #333, #555)';
+    musicBtn.style.color = '#aaa';
+    musicOn = false;
+  }
+});
+
+// ── ATTACH SOUNDS TO ELEMENTS ──
+document.addEventListener('click', (e) => {
+  // Start audio context on first interaction
+  getAudioCtx();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+  const btn = e.target.closest('.btn-primary, .next-scene-btn');
+  const chapter = e.target.closest('.chapter-header');
+  const card = e.target.closest('.chubu-card');
+
+  if (btn) playStarSound();
+  else if (chapter) playChapterSound();
+  else if (card) playClickSound();
+});
+
+// Hover sounds on nav links and buttons
+document.querySelectorAll('.next-scene-btn, .btn-primary').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    if (audioCtx) playHoverSound();
+  });
+});
+
 </script>
 </body>
 </html>
