@@ -555,12 +555,14 @@
     max-width: 780px;
     margin-top: 1rem;
     padding: 1rem 1.3rem;
-    background: var(--bg-card);
-    border: 1px solid rgba(0,170,255,0.15);
+    background: rgba(0,20,50,0.85);
+    border: 1px solid rgba(0,170,255,0.3);
+    border-left: 3px solid var(--cyan);
     border-radius: 8px;
-    font-size: 0.95rem;
-    color: rgba(200,230,255,0.72);
-    line-height: 1.7;
+    font-size: 1rem;
+    color: #e0f4ff;
+    line-height: 1.8;
+    font-weight: 500;
     backdrop-filter: blur(8px);
   }
 
@@ -765,10 +767,11 @@
   }
 
   .chubu-desc {
-    font-size: 0.9rem;
-    color: rgba(200,230,255,0.7);
-    line-height: 1.7;
+    font-size: 0.92rem;
+    color: #cce8ff;
+    line-height: 1.75;
     margin-bottom: 1rem;
+    font-weight: 500;
   }
 
   .chubu-stats {
@@ -796,9 +799,17 @@
 
   .stat-block-val {
     font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: rgba(220,240,255,0.85);
+    color: #e8f4ff;
+  }
+
+  .power-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: #a0c8f0;
+    letter-spacing: 2px;
+    white-space: nowrap;
   }
 
   /* ── SCIENCE SECTION ── */
@@ -859,21 +870,23 @@
 
   .sci-panel-body {
     padding: 1.3rem 1.5rem 1.5rem;
-    font-size: 0.95rem;
-    color: rgba(200,230,255,0.75);
-    line-height: 1.8;
+    font-size: 0.97rem;
+    color: #d0ecff;
+    line-height: 1.9;
+    font-weight: 500;
   }
 
   .sci-fact {
     margin-top: 1rem;
     padding: 0.8rem 1rem;
-    background: rgba(0,170,255,0.06);
-    border-left: 3px solid var(--cyan);
+    background: rgba(255,215,0,0.06);
+    border-left: 3px solid var(--gold);
     border-radius: 0 8px 8px 0;
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: var(--cyan);
+    color: #ffe87a;
     letter-spacing: 1px;
+    line-height: 1.7;
   }
 
   /* ── FOOTER ── */
@@ -1077,7 +1090,7 @@
       <div class="scene-item" id="scene-1">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 01 — TRANSMISSION ALPHA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="Hailuo_Video_A%20futuristic%20city%20called%20Iron%20City%20in%20the%20MatterDex%20universe%2C%20filled%20with%20towering%20silver%20skyscraper_517143230721712130.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">Iron City – The City of Progress — Iron City was one of the most advanced cities in the MatterDex world. Shining towers touched the clouds while flying vehicles crossed the skies. Machines helped citizens in their daily lives, and everyone lived in peace under the protection of Ferron. For years, the city prospered, unaware that danger was slowly awakening beneath the ground.</div>
@@ -1090,7 +1103,7 @@
       <div class="scene-item" id="scene-2">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 02 — TRANSMISSION BETA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="DEEPBE~1.MP4" type="video/mp4">
         </video>
         <div class="scene-desc">The Awakening of Rust Phantom — Deep below Iron City lay a forgotten cavern filled with glowing orange crystals. Suddenly, the ground began to tremble. Cracks spread across the cave walls as thunder echoed through the darkness. Orange energy surged through the chamber, and from the shadows, Rust Phantom slowly opened its glowing eyes. After centuries of silence, the ancient force had awakened.</div>
@@ -1103,7 +1116,7 @@
       <div class="scene-item" id="scene-3">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 03 — TRANSMISSION GAMMA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="RUSTPH~1.MP4" type="video/mp4">
         </video>
         <div class="scene-desc">The Corrosion Storm — Rust Phantom rose from the depths and escaped the cavern. As it emerged, dark orange clouds spread across the sky. Powerful winds carried rust particles across the land, turning the bright horizon into a sea of orange. The peaceful citizens looked upward in fear as the mysterious storm approached Iron City.</div>
@@ -1116,7 +1129,7 @@
       <div class="scene-item" id="scene-4">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 04 — TRANSMISSION DELTA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="Hailuo_Video_In%20the%20original%20science-fantasy%20world%20of%20MatterDex%2C%20a%20futuristic%20city%20called%20Iron%20City%20shines%20with%20s_517134488756097033.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">Ferron's Greatest Battle — Determined to protect his home, Ferron charged into battle against Rust Phantom and his growing army. The villain possessed Iron Guardians and machines, turning them against their own city. Ferron fought bravely through countless enemies, defending citizens and pushing forward despite overwhelming odds. Though powerful, he was slowly being surrounded by an army that seemed impossible to defeat.</div>
@@ -1129,7 +1142,7 @@
       <div class="scene-item" id="scene-5">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 05 — TRANSMISSION EPSILON</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="THEBAT~1.MP4" type="video/mp4">
         </video>
         <div class="scene-desc">Hope Arrives — Exhausted from battle, Ferron began losing ground against the Rust Army. Just when defeat seemed certain, Aqua and Hemovex arrived to help. Aqua washed away waves of corrosion while Hemovex restored strength to the defenders. Together they fought courageously, but even their combined powers were not enough to stop Rust Phantom completely.</div>
@@ -1142,7 +1155,7 @@
       <div class="scene-item" id="scene-6">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 06 — TRANSMISSION ZETA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="Hailuo_Video_ron%20City%20is%20under%20attack%20as%20the%20powerful%20Rust%20Phantom%20stands%20victorious%20above%20the%20city%2C%20surrounded%20b_517146364000923656.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">A Light Beyond the Horizon — As the battle continued, a brilliant golden light appeared far beyond the horizon. The dark clouds began to part as a radiant figure approached the city. Citizens looked upward with hope, while even Rust Phantom paused in surprise. A new guardian was coming.</div>
@@ -1155,7 +1168,7 @@
       <div class="scene-item" id="scene-7">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 07 — TRANSMISSION ETA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="IRONCI~1.MP4" type="video/mp4">
         </video>
         <div class="scene-desc">Ferron's Golden Awakening — The legendary Aurex descended from the sky and unleashed thousands of glowing golden particles. They surrounded Ferron in a vortex of light, removing the effects of corrosion and restoring his strength. Golden energy spread across his armor, making him stronger than before. Ferron rose once again, ready for the final battle.</div>
@@ -1168,7 +1181,7 @@
       <div class="scene-item" id="scene-8">
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 08 — TRANSMISSION THETA</div>
-        <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
+        <video controls muted style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
           <source src="BATTLE~1.MP4" type="video/mp4">
         </video>
         <div class="scene-desc">The Guardians Unite — Ferron, Aurex, Aqua, Hemovex, Hydronix, Oxyra, and Uranion stood together against Rust Phantom. Combining their unique powers, they unleashed a magnificent beam of energy that defeated the corruption forever. With the battle won, Iron City was restored, and its citizens celebrated the bravery of the guardians whose unity saved the world.</div>
@@ -1509,7 +1522,18 @@ chubus.forEach((c, i) => {
   grid.appendChild(card);
 });
 
-// ── INTERSECTION OBSERVER ──
+// ── VIDEO AUTOPLAY ON SCROLL ──
+const videos = document.querySelectorAll('video');
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.play();
+    } else {
+      e.target.pause();
+    }
+  });
+}, { threshold: 0.5 });
+videos.forEach(v => videoObserver.observe(v));
 const revealAll = document.querySelectorAll('.reveal, .chubu-card, .sci-panel, .scene-item');
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
