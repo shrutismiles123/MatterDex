@@ -651,13 +651,13 @@
 
   .chubu-img {
     width: 100%;
-    aspect-ratio: 4/3;
     background: var(--card-dim, rgba(0,60,120,0.25));
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    min-height: 200px;
   }
 
   .chubu-img::after {
@@ -1078,7 +1078,7 @@
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 01 — TRANSMISSION ALPHA</div>
         <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
-          <source src="Hailuo_Video_A futuristic city called Iron City in the MatterDex universe, filled with towering silver skyscraper_517143230721712130.mp4" type="video/mp4">
+          <source src="Hailuo_Video_A%20futuristic%20city%20called%20Iron%20City%20in%20the%20MatterDex%20universe%2C%20filled%20with%20towering%20silver%20skyscraper_517143230721712130.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">[Add your description for Scene 1 here.]</div>
         <button class="next-scene-btn" onclick="scrollToScene('scene-2', this)">
@@ -1117,7 +1117,7 @@
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 04 — TRANSMISSION DELTA</div>
         <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
-          <source src="Hailuo_Video_In the original science-fantasy world of MatterDex, a futuristic city called Iron City shines with s_517134488756097033.mp4" type="video/mp4">
+          <source src="Hailuo_Video_In%20the%20original%20science-fantasy%20world%20of%20MatterDex%2C%20a%20futuristic%20city%20called%20Iron%20City%20shines%20with%20s_517134488756097033.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">[Add your description for Scene 4 here.]</div>
         <button class="next-scene-btn" onclick="scrollToScene('scene-5', this)">
@@ -1143,7 +1143,7 @@
         <div class="scene-dot"></div>
         <div class="scene-label">▸ SCENE 06 — TRANSMISSION ZETA</div>
         <video controls style="width:100%; max-width:780px; border-radius:12px; border:1px solid rgba(0,170,255,0.3); box-shadow:0 0 20px rgba(0,170,255,0.2);">
-          <source src="Hailuo_Video_ron City is under attack as the powerful Rust Phantom stands victorious above the city, surrounded b_517146364000923656.mp4" type="video/mp4">
+          <source src="Hailuo_Video_ron%20City%20is%20under%20attack%20as%20the%20powerful%20Rust%20Phantom%20stands%20victorious%20above%20the%20city%2C%20surrounded%20b_517146364000923656.mp4" type="video/mp4">
         </video>
         <div class="scene-desc">[Add your description for Scene 6 here.]</div>
         <button class="next-scene-btn" onclick="scrollToScene('scene-7', this)">
@@ -1477,11 +1477,11 @@ chubus.forEach((c, i) => {
   card.className = 'chubu-card';
   card.style.cssText = `--card-col:${c.col}; --card-glow:${c.glow}; --card-dim:${c.dim}; transition-delay:${i*0.07}s`;
   card.innerHTML = `
-    <div class="chubu-img" style="background:${c.dim}; position:relative; overflow:hidden;">
+    <div class="chubu-img" style="background:${c.dim}; position:relative; overflow:hidden; min-height:200px;">
       <img src="${c.img}" alt="${c.name}" class="chubu-real-img"
-        style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:0; display:block;"
+        style="width:100%; height:auto; object-fit:contain; display:block; position:relative;"
         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="chubu-img-placeholder" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; position:absolute; inset:0;">
+      <div class="chubu-img-placeholder" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; position:absolute; inset:0; padding:1rem;">
         <div class="chubu-img-icon">${c.icon}</div>
         <div class="chubu-img-label">[ IMAGE NOT FOUND ]</div>
       </div>
