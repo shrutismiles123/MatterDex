@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatterDex: The Guardians of Matter</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #010a14;
+    --bg-mid: #020f1e;
+    --bg-card: rgba(5,20,40,0.75);
+    --blue: #00aaff;
+    --cyan: #00fff7;
+    --gold: #ffd700;
+    --red: #ff3b3b;
+    --green: #39ff8e;
+    --white: #e8f4ff;
+    --dim: rgba(0,170,255,0.12);
+    --glow-blue: 0 0 18px #00aaff88, 0 0 40px #00aaff33;
+    --glow-gold: 0 0 18px #ffd70088, 0 0 40px #ffd70033;
+    --glow-cyan: 0 0 18px #00fff788, 0 0 40px #00fff733;
+    --glow-red: 0 0 18px #ff3b3b88, 0 0 40px #ff3b3b33;
+    --glow-green: 0 0 18px #39ff8e88, 0 0 40px #39ff8e33;
+    --font-head: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 16px;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── CANVAS PARTICLES ── */
+  #particle-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  /* Hidden for now — change display:none to display:flex to restore */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(1,10,20,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(0,170,255,0.2);
+    padding: 0 2rem;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+  }
+
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-shadow: var(--glow-cyan);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-head);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(200,230,255,0.7);
+    text-decoration: none;
+    padding: 0.45rem 0.9rem;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover {
+    color: var(--cyan);
+    border-color: rgba(0,255,247,0.35);
+    background: rgba(0,255,247,0.07);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--cyan);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  @media (max-width: 768px) {
+    .hamburger { display: flex; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 62px;
+      left: 0; right: 0;
+      flex-direction: column;
+      background: rgba(1,10,20,0.97);
+      border-bottom: 1px solid rgba(0,170,255,0.2);
+      padding: 1rem;
+      gap: 0.3rem;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 0.7rem; padding: 0.7rem 1rem; }
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 2rem 4rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,120,255,0.1) 0%, transparent 70%);
+  }
+
+  .hero-badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 5px;
+    border: 1px solid rgba(255,215,0,0.3);
+    padding: 0.35rem 1.2rem;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    background: rgba(255,215,0,0.05);
+    animation: pulse-gold 3s infinite;
+  }
+
+  @keyframes pulse-gold {
+    0%,100% { box-shadow: 0 0 8px rgba(255,215,0,0.2); }
+    50% { box-shadow: 0 0 22px rgba(255,215,0,0.5); }
+  }
+
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    background: linear-gradient(135deg, #fff 20%, var(--cyan) 50%, var(--blue) 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: title-glow 4s ease-in-out infinite;
+    margin-bottom: 0.4rem;
+  }
+
+  @keyframes title-glow {
+    0%,100% { filter: drop-shadow(0 0 20px rgba(0,200,255,0.4)); }
+    50% { filter: drop-shadow(0 0 50px rgba(0,200,255,0.8)); }
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-head);
+    font-size: clamp(0.8rem, 2.5vw, 1.3rem);
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    text-shadow: var(--glow-gold);
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: rgba(200,230,255,0.75);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    font-weight: 400;
+  }
+
+  .btn-primary {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--bg-deep);
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    border: none;
+    padding: 1rem 2.8rem;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 0 30px rgba(0,200,255,0.5), inset 0 0 20px rgba(255,255,255,0.1);
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -60%;
+    width: 40%; height: 200%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-20deg);
+    transition: left 0.5s;
+  }
+
+  .btn-primary:hover::before { left: 120%; }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 0 50px rgba(0,200,255,0.8), inset 0 0 20px rgba(255,255,255,0.15);
+  }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.5;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  .hero-scroll-hint span {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--cyan);
+  }
+
+  .scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border-right: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: rotate(45deg);
+  }
+
+  /* ── SECTION WRAPPERS ── */
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-line {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    margin: 0 auto 1.5rem;
+  }
+
+  .section-sub {
+    text-align: center;
+    color: rgba(200,230,255,0.6);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-bottom: 4rem;
+    font-family: var(--font-mono);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,170,255,0.3), transparent);
+    margin: 0;
+  }
+
+  /* ── STORY SECTION ── */
+  #story {
+    background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
+  }
+
+  .progress-bar-wrap {
+    background: rgba(0,170,255,0.1);
+    border-radius: 50px;
+    height: 6px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    border: 1px solid rgba(0,170,255,0.2);
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    border-radius: 50px;
+    width: 0%;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--cyan);
+    text-align: right;
+    margin-bottom: 0.4rem;
+    letter-spacing: 2px;
+  }
+
+  .chapter-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0,170,255,0.2);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .chapter-card:hover {
+    border-color: rgba(0,170,255,0.5);
+    box-shadow: 0 0 20px rgba(0,170,255,0.15);
+  }
+
+  .chapter-card.open {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.2rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .chapter-num {
+    font-family: var(--font-head);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    background: rgba(255,215,0,0.08);
+    border: 1px solid rgba(255,215,0,0.25);
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .chapter-title {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--white);
+    flex: 1;
+  }
+
+  .chapter-arrow {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: rotate(45deg);
+    transition: transform 0.35s, border-color 0.25s;
+    flex-shrink: 0;
+  }
+
+  .chapter-card.open .chapter-arrow { transform: rotate(-135deg); }
+
+  .chapter-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .chapter-body-inner {
+    padding: 0 1.5rem 1.5rem;
+    font-size: 1.05rem;
+    line-height: 2;
+    color: #c8e8ff;
+    font-weight: 500;
+    border-top: 1px solid rgba(0,170,255,0.12);
+    padding-top: 1.2rem;
+  }
+
+  .chapter-body-inner p { color: #dff0ff; }
+  .chapter-body-inner strong { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,247,0.5); }
+  .chapter-body-inner em { color: var(--gold); font-style: italic; }
+
+  /* ── VIDEO ARCHIVE ── */
+  #video-archive {
+    background: linear-gradient(180deg, var(--bg-mid) 0%, var(--bg-deep) 100%);
+  }
+
+  .scene-timeline {
+    position: relative;
+    padding-left: 3rem;
+  }
+
+  .scene-timeline::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--blue), var(--cyan), transparent);
+  }
+
+  .scene-item {
+    position: relative;
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .scene-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scene-dot {
+    position: absolute;
+    left: -2.7rem;
+    top: 1.2rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: var(--glow-cyan);
+    border: 2px solid var(--bg-deep);
+  }
+
+  .scene-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 0.7rem;
+  }
+
+  .video-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: rgba(5,20,40,0.9);
+    border: 1px dashed rgba(0,170,255,0.35);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    max-width: 780px;
+  }
+
+  .video-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,100,200,0.08), rgba(0,200,255,0.05));
+  }
+
+  .video-placeholder:hover {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .play-btn-fake {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0,170,255,0.15);
+    border: 2px solid rgba(0,170,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .video-placeholder:hover .play-btn-fake {
+    background: rgba(0,170,255,0.3);
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+    transform: scale(1.1);
+  }
+
+  .play-btn-fake::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 18px solid var(--cyan);
+    margin-left: 4px;
+  }
+
+  .video-placeholder span {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: rgba(0,170,255,0.6);
+    letter-spacing: 2px;
+  }
+
+  .scene-desc {
+    max-width: 780px;
+    margin-top: 1rem;
+    padding: 1rem 1.3rem;
+    background: var(--bg-card);
+    border: 1px solid rgba(0,170,255,0.15);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: rgba(200,230,255,0.72);
+    line-height: 1.7;
+    backdrop-filter: blur(8px);
+  }
+
+  .next-scene-btn {
+    font-family: var(--font-head);
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    background: rgba(0,170,255,0.08);
+    border: 1px solid rgba(0,170,255,0.35);
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.25s;
+    max-width: 780px;
+  }
+
+  .next-scene-btn:hover {
+    background: rgba(0,170,255,0.18);
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .next-scene-btn svg { transition: transform 0.25s; }
+  .next-scene-btn:hover svg { transform: translateY(4px); }
+
+  /* ── STAR BURST ANIMATION ── */
+  .star-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 1.1rem;
+    animation: star-fly 0.9s ease-out forwards;
+  }
+
+  @keyframes star-fly {
+    0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(360deg); }
+  }
+
+  /* ── CHUBUS COLLECTION ── */
+  #chubus {
+    background: linear-gradient(180deg, var(--bg-deep) 0%, #000d1a 100%);
+  }
+
+  .chubus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.8rem;
+  }
+
+  .chubu-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--card-accent, rgba(0,170,255,0.2));
+    backdrop-filter: blur(14px);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+  }
+
+  .chubu-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .chubu-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 30px var(--card-glow, rgba(0,170,255,0.35));
+    border-color: var(--card-col, var(--blue));
+  }
+
+  .chubu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-col, var(--blue));
+    opacity: 0.8;
+  }
+
+  .chubu-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--card-dim, rgba(0,60,120,0.25));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chubu-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--card-dim, rgba(0,100,200,0.2)) 0%, transparent 70%);
+  }
+
+  .chubu-img-icon {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 0 16px var(--card-col, var(--blue)));
+    position: relative;
+    z-index: 1;
+    animation: float-icon 3s ease-in-out infinite;
+  }
+
+  @keyframes float-icon {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.05); }
+  }
+
+  .chubu-img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+  }
+    position: absolute;
+    bottom: 0.6rem; right: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(200,220,255,0.4);
+    letter-spacing: 2px;
+    z-index: 2;
+  }
+
+  .chubu-body {
+    padding: 1.2rem 1.3rem 1.5rem;
+  }
+
+  .chubu-type-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--card-col, var(--blue));
+    border: 1px solid var(--card-col, var(--blue));
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    margin-bottom: 0.6rem;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .chubu-name {
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--card-col, var(--white));
+    text-shadow: 0 0 12px var(--card-col, rgba(0,170,255,0.5));
+    margin-bottom: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  .chubu-power {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .power-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: rgba(200,230,255,0.5);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  .power-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .power-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--card-col, var(--blue)), rgba(255,255,255,0.6));
+    border-radius: 50px;
+    box-shadow: 0 0 8px var(--card-col, var(--blue));
+  }
+
+  .power-num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--card-col, var(--blue));
+    font-weight: 700;
+  }
+
+  .chubu-desc {
+    font-size: 0.9rem;
+    color: rgba(200,230,255,0.7);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .chubu-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .stat-block {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .stat-block-label {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-block-label.str { color: var(--green); }
+  .stat-block-label.wk { color: var(--red); }
+
+  .stat-block-val {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(220,240,255,0.85);
+  }
+
+  /* ── SCIENCE SECTION ── */
+  #science {
+    background: linear-gradient(180deg, #000d1a 0%, var(--bg-deep) 100%);
+  }
+
+  .science-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .sci-panel {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid rgba(0,170,255,0.15);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+  }
+
+  .sci-panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sci-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0,170,255,0.2);
+  }
+
+  .sci-panel-header {
+    padding: 1.4rem 1.5rem 1rem;
+    background: linear-gradient(135deg, rgba(0,100,200,0.12), rgba(0,200,255,0.06));
+    border-bottom: 1px solid rgba(0,170,255,0.12);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .sci-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px rgba(0,200,255,0.5));
+  }
+
+  .sci-panel-title {
+    font-family: var(--font-head);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .sci-panel-body {
+    padding: 1.3rem 1.5rem 1.5rem;
+    font-size: 0.95rem;
+    color: rgba(200,230,255,0.75);
+    line-height: 1.8;
+  }
+
+  .sci-fact {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    background: rgba(0,170,255,0.06);
+    border-left: 3px solid var(--cyan);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--cyan);
+    letter-spacing: 1px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: rgba(0,5,15,0.95);
+    border-top: 1px solid rgba(0,170,255,0.2);
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .footer-logo {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-text {
+    font-size: 0.85rem;
+    color: rgba(200,230,255,0.4);
+    letter-spacing: 1px;
+  }
+
+  .footer-text span {
+    color: rgba(0,200,255,0.7);
+  }
+
+  /* ── REVEAL UTILITY ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">MATTERDEX</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#story">Story</a></li>
+    <li><a href="#chubus">Chubus</a></li>
+    <li><a href="#video-archive">Video Archive</a></li>
+    <li><a href="#science">Science</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero-badge">✦ DIGITAL SCIENCE ENCYCLOPEDIA ✦</div>
+  <h1 class="hero-title">MATTERDEX</h1>
+  <div class="hero-subtitle">The Guardians of Matter</div>
+  <p class="hero-desc">Explore a world where Elements, Compounds, and Mixtures come alive as legendary creatures called <strong>Chubus</strong> — guardians of the material universe.</p>
+  <button class="btn-primary" onclick="document.getElementById('story').scrollIntoView({behavior:'smooth'})">BEGIN ADVENTURE</button>
+  <div class="hero-scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STORY -->
+<section id="story">
+  <div class="section-inner">
+    <div class="section-title reveal">STORY ARCHIVE</div>
+    <div class="section-line reveal"></div>
+    <div class="section-sub reveal">CHRONICLE OF THE GUARDIANS</div>
+
+    <div class="reveal">
+      <div class="progress-label">STORY PROGRESS: <span id="progressText">0%</span></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div id="chapterContainer">
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 01</div>
+          <div class="chapter-title">The Birth of the MatterDex</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p>In the beginning, the universe was nothing but a vast, silent void — a darkness so complete it consumed all light. Then, in a moment of unimaginable energy, the Great Synthesis occurred. From this primordial explosion, the first building blocks of existence scattered across the cosmos like brilliant sparks across an infinite sky.</p>
+            <p>The scientists of the future, the Archivists of Matter, gathered these sparks into a single sacred tome — the <strong>MatterDex</strong>. This living encyclopedia catalogued every known form of matter in the universe, assigning each a guardian spirit, a Chubu, whose powers reflected the properties of the matter they represented.</p>
+            <p>The MatterDex was not merely a book. It pulsed with energy, hummed with knowledge, and glowed with the light of a thousand worlds. To open it was to peer into the very fabric of reality itself.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 02</div>
+          <div class="chapter-title">The First Chubus Awaken</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p>Deep within the MatterDex, the first Chubus stirred to life. <strong>Ferron</strong>, the iron guardian, was the first to emerge — a towering figure of dark metallic armour, his form carved from pure elemental iron, immovable and eternal. Where he walked, the ground rang with the sound of hammers on anvils.</p>
+            <p>Next came <strong>Oxyra</strong>, crackling with electric life force, essential and invisible, the breath of the world. Beside her rose <strong>Hydronix</strong>, the smallest yet most explosive of all the Chubus, dancing with blue fire that could power stars.</p>
+            <p>One by one, the guardians awakened. Each bore the mark of their matter — their strengths, their weaknesses, their alliances. Together, they formed the <strong>Council of Compounds</strong>, pledging to maintain the balance of matter across all dimensions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 03</div>
+          <div class="chapter-title">The Rust Phantom Rises</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p>Not all compounds were born of noble purpose. When <strong>Ferron</strong> encountered the relentless <strong>Oxyra</strong> in a realm of water and air, something unexpected happened. Their energies clashed and merged, and from the battle emerged <strong>Rust Phantom</strong> — a creature of slow, creeping orange decay, born from the process of oxidation.</p>
+            <p>Rust Phantom was not evil, but he was relentless. Wherever he passed, iron weakened, bridges crumbled, and machines groaned. He moved silently, invisibly, working across years and centuries. Ferron feared no sword, no hammer — but Rust Phantom wore him down with nothing more than time, moisture, and air.</p>
+            <p>The appearance of Rust Phantom taught the Archivists a vital truth: <em>matter changes</em>. Nothing remains as it began. Even the mightiest guardian carries the seed of transformation within them.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 04</div>
+          <div class="chapter-title">Aurex and the Electroplate Wars</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p><strong>Aurex</strong>, guardian of gold, was ancient beyond measure. Where others corroded and changed, Aurex remained radiant — noble, unreactive, eternal. The civilizations of the MatterDex world coveted Aurex's power, not just for wealth, but for protection.</p>
+            <p>The Archivists discovered that by channelling electric current through a solution of gold ions — a technique they called <em>electroplating</em> — they could coat weaker metals with Aurex's golden armour. Ferron, once vulnerable to Rust Phantom, could be shielded beneath a gleaming shell of gold.</p>
+            <p>The <strong>Electroplate Wars</strong> were fought not with weapons but with chemistry vats and electric coils, as the guardians competed to armour their chosen metals. In the end, Aurex stood above them all, untarnished and magnificent, a testament to the power of stability in a universe that never stops changing.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 05</div>
+          <div class="chapter-title">The Mixtures and the Age of Chaos</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p>Not all matter combined in perfect chemical bonds. Some existed in loose, chaotic arrangements — the Mixtures. <strong>Hemovex</strong>, guardian of blood, was the most complex of all: a dynamic mixture of plasma, cells, and proteins, constantly shifting, carrying life itself through every living system.</p>
+            <p>Where compounds were rigid and predictable, mixtures were fluid, versatile, and wild. They could be separated, filtered, and redistributed. They teamed together without changing their individual natures, a society of matter rather than a merger.</p>
+            <p>The Age of Chaos tested every guardian. The Chubus of mixtures rallied under <strong>Aqua</strong>, the water guardian, whose neutral nature made her the great mediator — dissolving conflicts, carrying solutions, sustaining all life that the MatterDex world had ever known.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-card reveal" data-chapter>
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-num">CH 06</div>
+          <div class="chapter-title">Uranion and the Final Frontier</div>
+          <div class="chapter-arrow"></div>
+        </div>
+        <div class="chapter-body">
+          <div class="chapter-body-inner">
+            <p>At the very edge of the known world, beyond the safe zones of stable elements, lay the domain of <strong>Uranion</strong> — the heaviest, most powerful, and most dangerous of all the Chubus. Radioactive and unstable, Uranion contained the energy of stars compressed into matter, slowly releasing it across millennia.</p>
+            <p>The Archivists approached Uranion with awe and caution. His power was immense — capable of lighting entire cities, or of catastrophic destruction if mishandled. He was the final lesson of the MatterDex: that matter is neither good nor bad, but that <em>understanding</em> it makes all the difference.</p>
+            <p>With the full Council assembled, the MatterDex was complete. The Guardians of Matter stood ready — a living bridge between science and story, between knowledge and wonder. And so the adventure begins for every student brave enough to open the first page.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VIDEO ARCHIVE -->
+<section id="video-archive">
+  <div class="section-inner">
+    <div class="section-title reveal">VIDEO ARCHIVE</div>
+    <div class="section-line reveal"></div>
+    <div class="section-sub reveal">RECORDED TRANSMISSIONS FROM THE FIELD</div>
+
+    <div class="scene-timeline">
+
+      <div class="scene-item" id="scene-1">
+        <div class="scene-dot"></div>
+        <div class="scene-label">▸ SCENE 01 — TRANSMISSION ALPHA</div>
+        <div class="video-placeholder">
+          <div class="play-btn-fake"></div>
+          <span>INSERT VIDEO — SCENE 01</span>
+        </div>
+        <div class="scene-desc">
+          [Add your video description here. Describe what happens in this scene — e.g. an introduction to elements, their properties, and the world of Chubus. This placeholder supports any embedded video file or YouTube link.]
+        </div>
+        <button class="next-scene-btn" onclick="scrollToScene('scene-2', this)">
+          NEXT SCENE
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 2L6 10M2 6L6 10L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="scene-item" id="scene-2">
+        <div class="scene-dot"></div>
+        <div class="scene-label">▸ SCENE 02 — TRANSMISSION BETA</div>
+        <div class="video-placeholder">
+          <div class="play-btn-fake"></div>
+          <span>INSERT VIDEO — SCENE 02</span>
+        </div>
+        <div class="scene-desc">
+          [Add your video description here. Explore the concept of chemical bonding, how compounds form, and which Chubus represent them. Replace this text with your own content.]
+        </div>
+        <button class="next-scene-btn" onclick="scrollToScene('scene-3', this)">
+          NEXT SCENE
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 2L6 10M2 6L6 10L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="scene-item" id="scene-3">
+        <div class="scene-dot"></div>
+        <div class="scene-label">▸ SCENE 03 — TRANSMISSION GAMMA</div>
+        <div class="video-placeholder">
+          <div class="play-btn-fake"></div>
+          <span>INSERT VIDEO — SCENE 03</span>
+        </div>
+        <div class="scene-desc">
+          [Add your video description here. A deep dive into the rusting of iron — the chemical reaction between iron, oxygen, and water — featuring Ferron and Rust Phantom in action.]
+        </div>
+        <button class="next-scene-btn" onclick="scrollToScene('scene-4', this)">
+          NEXT SCENE
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 2L6 10M2 6L6 10L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="scene-item" id="scene-4">
+        <div class="scene-dot"></div>
+        <div class="scene-label">▸ SCENE 04 — TRANSMISSION DELTA</div>
+        <div class="video-placeholder">
+          <div class="play-btn-fake"></div>
+          <span>INSERT VIDEO — SCENE 04</span>
+        </div>
+        <div class="scene-desc">
+          [Add your video description here. Demonstrate the electroplating process — how Aurex's golden power protects other metals through the use of electric current and gold solution.]
+        </div>
+        <button class="next-scene-btn" onclick="scrollToScene('scene-5', this)">
+          NEXT SCENE
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 2L6 10M2 6L6 10L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="scene-item" id="scene-5">
+        <div class="scene-dot"></div>
+        <div class="scene-label">▸ SCENE 05 — TRANSMISSION EPSILON</div>
+        <div class="video-placeholder">
+          <div class="play-btn-fake"></div>
+          <span>INSERT VIDEO — SCENE 05</span>
+        </div>
+        <div class="scene-desc">
+          [Add your video description here. Explore the world of mixtures — homogeneous, heterogeneous, suspensions, and colloids — guided by Aqua and Hemovex across the fluid domains.]
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CREATURE POWER COLLECTION -->
+<section id="chubus">
+  <div class="section-inner">
+    <div class="section-title reveal">CREATURE POWER COLLECTION</div>
+    <div class="section-line reveal"></div>
+    <div class="section-sub reveal">REGISTERED GUARDIANS — SERIES 01</div>
+
+    <div class="chubus-grid" id="chubusGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCIENCE -->
+<section id="science">
+  <div class="section-inner">
+    <div class="section-title reveal">SCIENCE BEHIND MATTERDEX</div>
+    <div class="section-line reveal"></div>
+    <div class="section-sub reveal">ARCHIVIST KNOWLEDGE DATABASE</div>
+
+    <div class="science-grid">
+
+      <div class="sci-panel reveal">
+        <div class="sci-panel-header">
+          <div class="sci-icon">⚛️</div>
+          <div class="sci-panel-title">ELEMENTS</div>
+        </div>
+        <div class="sci-panel-body">
+          An element is a pure substance made of only one kind of atom. Elements cannot be broken down into simpler substances by chemical means. There are 118 known elements, each listed on the Periodic Table. Each element has a unique atomic number representing the number of protons in its nucleus.
+          <div class="sci-fact">◈ MatterDex Link: Ferron = Iron (Fe), Aurex = Gold (Au), Hydronix = Hydrogen (H), Oxyra = Oxygen (O), Uranion = Uranium (U)</div>
+        </div>
+      </div>
+
+      <div class="sci-panel reveal">
+        <div class="sci-panel-header">
+          <div class="sci-icon">🧪</div>
+          <div class="sci-panel-title">COMPOUNDS</div>
+        </div>
+        <div class="sci-panel-body">
+          A compound is a substance formed when two or more elements are chemically bonded together. Compounds have fixed compositions and properties different from their component elements. They can only be separated by chemical reactions. Water (H₂O) and rust (Fe₂O₃) are classic examples.
+          <div class="sci-fact">◈ MatterDex Link: Rust Phantom = Iron Oxide (Fe₂O₃), Aqua = Water (H₂O), Hemovex = Blood (complex biological compound-mixture)</div>
+        </div>
+      </div>
+
+      <div class="sci-panel reveal">
+        <div class="sci-panel-header">
+          <div class="sci-icon">🌀</div>
+          <div class="sci-panel-title">MIXTURES</div>
+        </div>
+        <div class="sci-panel-body">
+          A mixture is a combination of two or more substances not chemically combined. Each component retains its own properties and can be separated by physical methods like filtration, evaporation, or distillation. Mixtures can be homogeneous (uniform) or heterogeneous (non-uniform).
+          <div class="sci-fact">◈ Types include: solutions, suspensions, colloids. Blood is a complex heterogeneous mixture containing plasma, red/white blood cells, and platelets.</div>
+        </div>
+      </div>
+
+      <div class="sci-panel reveal">
+        <div class="sci-panel-header">
+          <div class="sci-icon">🟠</div>
+          <div class="sci-panel-title">RUSTING</div>
+        </div>
+        <div class="sci-panel-body">
+          Rusting is the process by which iron reacts with oxygen and water to form iron oxide (rust). It is an example of a chemical change and oxidation reaction. The balanced chemical equation is:<br><br>
+          <span style="font-family:var(--font-mono); color:var(--cyan); font-size:0.85rem;">4Fe + 3O₂ + 6H₂O → 4Fe(OH)₃ → 2Fe₂O₃·3H₂O</span>
+          <div class="sci-fact">◈ Prevention: painting, galvanising, oiling, and electroplating with corrosion-resistant metals like gold or zinc.</div>
+        </div>
+      </div>
+
+      <div class="sci-panel reveal">
+        <div class="sci-panel-header">
+          <div class="sci-icon">⚡</div>
+          <div class="sci-panel-title">ELECTROPLATING</div>
+        </div>
+        <div class="sci-panel-body">
+          Electroplating is the process of depositing a thin layer of one metal onto another using electrolysis. An electric current passes through a solution containing ions of the coating metal. The object to be coated is the cathode; the coating metal is the anode.
+          <div class="sci-fact">◈ Applications: gold-plated jewellery, chrome car bumpers, silver cutlery, and zinc-coated (galvanised) steel to prevent rusting.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">MATTERDEX</div>
+  <div class="footer-tagline">THE GUARDIANS OF MATTER</div>
+  <div class="footer-text">The MatterDex Project &nbsp;·&nbsp; Created by <span>[Student Name]</span> &nbsp;·&nbsp; Science Portfolio 2025</div>
+</footer>
+
+<script>
+// ── PARTICLES ──
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+});
+
+const COLORS = ['rgba(0,170,255,', 'rgba(0,255,247,', 'rgba(255,215,0,', 'rgba(57,255,142,'];
+const particles = Array.from({length: 90}, () => ({
+  x: Math.random() * 2000,
+  y: Math.random() * 1200,
+  r: Math.random() * 2.2 + 0.3,
+  vx: (Math.random() - 0.5) * 0.35,
+  vy: (Math.random() - 0.5) * 0.35,
+  a: Math.random() * 0.55 + 0.05,
+  c: COLORS[Math.floor(Math.random() * COLORS.length)]
+}));
+
+function animateParticles() {
+  ctx.clearRect(0, 0, W, H);
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.c + p.a + ')';
+    ctx.fill();
+  }
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ── HAMBURGER ──
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// ── CHAPTER ACCORDION ──
+let openChapters = 0;
+let totalChapters = document.querySelectorAll('[data-chapter]').length;
+
+function toggleChapter(header) {
+  const card = header.closest('.chapter-card');
+  const body = card.querySelector('.chapter-body');
+  const isOpen = card.classList.contains('open');
+  if (isOpen) {
+    card.classList.remove('open');
+    body.style.maxHeight = '0';
+    openChapters = Math.max(0, openChapters - 1);
+  } else {
+    card.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    openChapters = Math.min(totalChapters, openChapters + 1);
+  }
+  const pct = Math.round((openChapters / totalChapters) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+// ── SCROLL TO SCENE with STAR BURST ──
+function scrollToScene(id, btn) {
+  // fire stars from button position
+  const rect = btn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const stars = ['✦','★','✸','✺','⋆','*','✷'];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('span');
+    el.className = 'star-particle';
+    el.textContent = stars[Math.floor(Math.random() * stars.length)];
+    const angle = (Math.PI * 2 * i) / 14;
+    const dist = 60 + Math.random() * 80;
+    el.style.cssText = `left:${cx}px; top:${cy}px; color:${['#00fff7','#ffd700','#00aaff','#39ff8e'][i%4]}; --tx:${Math.cos(angle)*dist}px; --ty:${Math.sin(angle)*dist}px;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+  }
+  // scroll after brief delay so user sees burst
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+// ── CHUBUS DATA ──
+const chubus = [
+  {
+    name: 'Ferron',
+    type: 'ELEMENT',
+    power: 78,
+    icon: '⚙️',
+    col: '#7cc8ff',
+    glow: 'rgba(124,200,255,0.4)',
+    dim: 'rgba(30,80,140,0.25)',
+    desc: 'The iron guardian, ancient and unyielding. Ferron commands magnetic force and structural endurance. His body is forged from pure elemental iron and he has never been defeated by force alone.',
+    strength: 'Magnetic Force & Structural Durability',
+    weakness: 'Moisture + Oxyra (Rusting)',
+  },
+  {
+    name: 'Rust Phantom',
+    type: 'COMPOUND',
+    power: 55,
+    icon: '🟠',
+    col: '#ff7b29',
+    glow: 'rgba(255,123,41,0.4)',
+    dim: 'rgba(120,50,10,0.25)',
+    desc: 'Born of iron\'s slow surrender to air and water. Rust Phantom moves silently, spreading oxidation across metal surfaces over time. What he lacks in speed, he compensates in inevitability.',
+    strength: 'Unstoppable Corrosion over Time',
+    weakness: 'Dry Environments & Electroplating',
+  },
+  {
+    name: 'Aurex',
+    type: 'ELEMENT',
+    power: 92,
+    icon: '✨',
+    col: '#ffd700',
+    glow: 'rgba(255,215,0,0.45)',
+    dim: 'rgba(100,80,0,0.25)',
+    desc: 'Guardian of gold — noble, incorruptible, eternal. Aurex has never rusted, never corroded. His armour is the standard against which all protection is measured, valued across every civilisation.',
+    strength: 'Noble Inertness & Eternal Radiance',
+    weakness: 'Aqua Regia (acids)',
+  },
+  {
+    name: 'Aqua',
+    type: 'COMPOUND',
+    power: 70,
+    icon: '💧',
+    col: '#00cfff',
+    glow: 'rgba(0,207,255,0.4)',
+    dim: 'rgba(0,80,130,0.25)',
+    desc: 'The universal mediator. Aqua exists in all three states — solid, liquid, and gas — and is the most essential substance for all life. She is both the calm lake and the raging storm.',
+    strength: 'Universal Solvent & Life Support',
+    weakness: 'Extreme Temperature & Electrolysis',
+  },
+  {
+    name: 'Hemovex',
+    type: 'MIXTURE',
+    power: 83,
+    icon: '🩸',
+    col: '#ff3b3b',
+    glow: 'rgba(255,59,59,0.4)',
+    dim: 'rgba(120,10,10,0.25)',
+    desc: 'The living river. Hemovex is a dynamic mixture of plasma, red cells, white cells, and platelets, flowing through every living system. He is the guardian of vitality itself.',
+    strength: 'Oxygen Transport & Immune Defence',
+    weakness: 'Extreme Heat & Chemical Disruption',
+  },
+  {
+    name: 'Hydronix',
+    type: 'ELEMENT',
+    power: 65,
+    icon: '💥',
+    col: '#a0eaff',
+    glow: 'rgba(160,234,255,0.4)',
+    dim: 'rgba(40,110,160,0.25)',
+    desc: 'The smallest and most explosive Chubu in the MatterDex. Hydronix powers stars through fusion, fuels rockets, and is the first element in the periodic table. Small but utterly unstoppable.',
+    strength: 'Fusion Energy & High Flammability',
+    weakness: 'Oxyra Bonding (forms Water)',
+  },
+  {
+    name: 'Oxyra',
+    type: 'ELEMENT',
+    power: 80,
+    icon: '🌬️',
+    col: '#39ff8e',
+    glow: 'rgba(57,255,142,0.4)',
+    dim: 'rgba(10,100,50,0.25)',
+    desc: 'Invisible yet essential, Oxyra is the breath of the world. She fuels every flame, enables every breath, and is present in three quarters of all compounds. Without her, nothing burns or lives.',
+    strength: 'Oxidation Power & Life Sustaining',
+    weakness: 'Noble Gases (unreactive)',
+  },
+  {
+    name: 'Uranion',
+    type: 'ELEMENT',
+    power: 99,
+    icon: '☢️',
+    col: '#9bff40',
+    glow: 'rgba(155,255,64,0.4)',
+    dim: 'rgba(60,90,0,0.25)',
+    desc: 'The heaviest guardian. Uranion radiates immense energy from his unstable nucleus, decaying slowly across millennia. He is the final lesson — immense power, extreme danger, demanding respect.',
+    strength: 'Nuclear Energy & Radioactive Decay',
+    weakness: 'Instability & Fission Reactions',
+  },
+];
+
+const grid = document.getElementById('chubusGrid');
+chubus.forEach((c, i) => {
+  const card = document.createElement('div');
+  card.className = 'chubu-card';
+  card.style.cssText = `--card-col:${c.col}; --card-glow:${c.glow}; --card-dim:${c.dim}; transition-delay:${i*0.07}s`;
+  card.innerHTML = `
+    <div class="chubu-img" style="background:${c.dim}">
+      <img src="" alt="${c.name}" class="chubu-real-img" style="display:none; width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:0;">
+      <div class="chubu-img-placeholder">
+        <div class="chubu-img-icon">${c.icon}</div>
+        <div class="chubu-img-label">[ ADD IMAGE: ${c.name.toLowerCase().replace(' ','_')}.jpg ]</div>
+      </div>
+    </div>
+    <div class="chubu-body">
+      <div class="chubu-type-badge">${c.type}</div>
+      <div class="chubu-name">${c.name}</div>
+      <div class="chubu-power">
+        <span class="power-label">POWER LVL</span>
+        <div class="power-bar"><div class="power-fill" style="width:${c.power}%"></div></div>
+        <span class="power-num">${c.power}</span>
+      </div>
+      <div class="chubu-desc">${c.desc}</div>
+      <div class="chubu-stats">
+        <div class="stat-block">
+          <div class="stat-block-label str">◈ STRENGTH</div>
+          <div class="stat-block-val">${c.strength}</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label wk">◈ WEAKNESS</div>
+          <div class="stat-block-val">${c.weakness}</div>
+        </div>
+      </div>
+    </div>`;
+  grid.appendChild(card);
+});
+
+// ── INTERSECTION OBSERVER ──
+const revealAll = document.querySelectorAll('.reveal, .chubu-card, .sci-panel, .scene-item');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+revealAll.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
